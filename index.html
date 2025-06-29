@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Transformation Quiz</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide-react/0.263.1/umd/lucide-react.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+        const { CheckCircle, XCircle, Trophy, Brain, Database, BarChart3, Cloud, Zap, Users } = lucide;
+
+        const DigitalTransformationQuiz = () => {
+            const [currentQuestion, setCurrentQuestion] = useState(0);
+            const [score, setScore] = useState(0);
+            const [showResult, setShowResult] = useState(false);
+            const [selectedAnswer, setSelectedAnswer] = useState(null);
+            const [answered, setAnswered] = useState(false);
+            const [userAnswers, setUserAnswers] = useState([]);
+
+            const questions = [
+                {
+                    category: "KI & Machine Learning",
+                    icon: React.createElement(Brain, { className: "w-5 h-5" }),
+                    question: "Was ist Machine Learning?",
+                    options: [
+                        "Ein Computerprogramm, das Maschinen repariert",
+                        "Eine Methode, bei der Computer aus Daten lernen ohne explizit programmiert zu werden",
+                        "Eine Art von Roboter, der physische Aufgaben erledigt",
+                        "Ein Tool zur Erstellung von Präsentationen"
+                    ],
+                    correct: 1,
+                    explanation: "Machine Learning ermöglicht es Computern, aus Daten zu lernen und Vorhersagen zu treffen, ohne dass sie für jeden Fall explizit programmiert werden müssen."
+                },
+                {
+                    category: "Big Data",
+                    icon: React.createElement(Database, { className: "w-5 h-5" }),
+                    question: "Welche der folgenden Eigenschaften gehören zu den '5 V's' von Big Data?",
+                    options: [
+                        "Volume, Velocity, Variety, Veracity, Value",
+                        "Virtual, Visual, Verbal, Vertical, Visible",
+                        "Validation, Verification, Version, Vector, Variable",
+                        "Video, Voice, Visual, Virtual, Valuable"
+                    ],
+                    correct: 0,
+                    explanation: "Die 5 V's von Big Data sind: Volume (Menge), Velocity (Geschwindigkeit), Variety (Vielfalt), Veracity (Wahrhaftigkeit) und Value (Wert)."
+                },
+                {
+                    category: "Power BI & Analytics",
+                    icon: React.createElement(BarChart3, { className: "w-5 h-5" }),
+                    question: "Was ist der Hauptzweck von Power BI?",
+                    options: [
+                        "Programmcode zu schreiben",
+                        "E-Mails zu versenden",
+                        "Daten zu visualisieren und Business Intelligence zu erstellen",
+                        "Websites zu erstellen"
+                    ],
+                    correct: 2,
+                    explanation: "Power BI ist ein Business Analytics Tool von Microsoft, das zur Datenvisualisierung und zur Erstellung von interaktiven Dashboards verwendet wird."
+                },
+                {
+                    category: "Cloud Computing",
+                    icon: React.createElement(Cloud, { className: "w-5 h-5" }),
+                    question: "Was ist ein Hauptvorteil von Cloud Computing?",
+                    options: [
+                        "Es macht das Internet schneller",
+                        "Skalierbarkeit und Kosteneffizienz",
+                        "Es ersetzt alle Computer",
+                        "Es funktioniert nur bei gutem Wetter"
+                    ],
+                    correct: 1,
+                    explanation: "Cloud Computing bietet Skalierbarkeit (Ressourcen nach Bedarf) und Kosteneffizienz (Pay-as-you-use Modell) als Hauptvorteile."
+                },
+                {
+                    category: "KI Anwendungen",
+                    icon: React.createElement(Brain, { className: "w-5 h-5" }),
+                    question: "Welches ist ein typisches Beispiel für KI im Alltag?",
+                    options: [
+                        "Ein normaler Taschenrechner",
+                        "Sprachassistenten wie Siri oder Alexa",
+                        "Ein USB-Stick",
+                        "Ein Drucker"
+                    ],
+                    correct: 1,
+                    explanation: "Sprachassistenten nutzen KI-Technologien wie Natural Language Processing und Machine Learning, um Sprache zu verstehen und zu antworten."
+                },
+                {
+                    category: "Datenanalyse",
+                    icon: React.createElement(Database, { className: "w-5 h-5" }),
+                    question: "Was bedeutet 'Data Mining'?",
+                    options: [
+                        "Das physische Graben nach Computerfestplatten",
+                        "Das Löschen von unwichtigen Daten",
+                        "Das Entdecken von Mustern und Erkenntnissen in großen Datenmengen",
+                        "Das Erstellen von Backups"
+                    ],
+                    correct: 2,
+                    explanation: "Data Mining ist der Prozess der Entdeckung von Mustern, Trends und nützlichen Informationen in großen Datenmengen."
+                },
+                {
+                    category: "Digital Workplace",
+                    icon: React.createElement(Users, { className: "w-5 h-5" }),
+                    question: "Was ist ein typisches Tool für die digitale Zusammenarbeit?",
+                    options: [
+                        "Microsoft Teams oder Slack",
+                        "Ein Faxgerät",
+                        "Ein Overhead-Projektor",
+                        "Ein Telefon mit Wählscheibe"
+                    ],
+                    correct: 0,
+                    explanation: "Tools wie Microsoft Teams, Slack oder Zoom ermöglichen digitale Zusammenarbeit durch Chat, Videokonferenzen und Dateiaustausch."
+                },
+                {
+                    category: "Automation",
+                    icon: React.createElement(Zap, { className: "w-5 h-5" }),
+                    question: "Was ist Robotic Process Automation (RPA)?",
+                    options: [
+                        "Roboter, die in Fabriken arbeiten",
+                        "Software, die wiederkehrende digitale Aufgaben automatisiert",
+                        "Roboter, die Häuser putzen",
+                        "Ein Videospiel über Roboter"
+                    ],
+                    correct: 1,
+                    explanation: "RPA verwendet Software-Roboter, um repetitive, regelbasierte digitale Aufgaben zu automatisieren, wie z.B. Datenerfassung oder E-Mail-Verarbeitung."
+                },
+                {
+                    category: "Business Intelligence",
+                    icon: React.createElement(BarChart3, { className: "w-5 h-5" }),
+                    question: "Was ist ein Dashboard im Business-Kontext?",
+                    options: [
+                        "Das Armaturenbrett eines Autos",
+                        "Eine interaktive Anzeige wichtiger Geschäftskennzahlen",
+                        "Ein Computerspiel",
+                        "Eine Art von Tastatur"
+                    ],
+                    correct: 1,
+                    explanation: "Ein Business Dashboard ist eine visuelle Anzeige der wichtigsten Informationen und KPIs, die für das Erreichen von Geschäftszielen benötigt werden."
+                },
+                {
+                    category: "IoT",
+                    icon: React.createElement(Zap, { className: "w-5 h-5" }),
+                    question: "Was bedeutet 'Internet of Things' (IoT)?",
+                    options: [
+                        "Ein schnelleres Internet",
+                        "Vernetzte Geräte, die Daten austauschen können",
+                        "Eine neue Social Media Plattform",
+                        "Ein Online-Shop für technische Geräte"
+                    ],
+                    correct: 1,
+                    explanation: "IoT bezeichnet die Vernetzung von physischen Geräten, die über das Internet Daten sammeln und austauschen können, wie Smart Home Geräte oder Wearables."
+                },
+                {
+                    category: "Cyber Security",
+                    icon: React.createElement(Brain, { className: "w-5 h-5" }),
+                    question: "Was ist ein wichtiger Aspekt der Cybersicherheit in der digitalen Transformation?",
+                    options: [
+                        "Alle Passwörter sollten '123456' sein",
+                        "Regelmäßige Updates und starke Authentifizierung",
+                        "Computer sollten nie ausgeschaltet werden",
+                        "E-Mails von Unbekannten immer öffnen"
+                    ],
+                    correct: 1,
+                    explanation: "Starke Passwörter, regelmäßige Updates, Zwei-Faktor-Authentifizierung und Schulungen sind wichtige Bausteine der Cybersicherheit."
+                },
+                {
+                    category: "Agile Methoden",
+                    icon: React.createElement(Users, { className: "w-5 h-5" }),
+                    question: "Was ist ein Hauptprinzip von agilen Arbeitsmethoden?",
+                    options: [
+                        "Alles muss perfekt geplant werden bevor man anfängt",
+                        "Iterative Entwicklung und schnelle Anpassung an Veränderungen",
+                        "Nur der Chef trifft Entscheidungen",
+                        "Meetings sind völlig überflüssig"
+                    ],
+                    correct: 1,
+                    explanation: "Agile Methoden betonen iterative Entwicklung, kontinuierliche Verbesserung und die Fähigkeit, schnell auf Veränderungen zu reagieren."
+                },
+                {
+                    category: "Data Visualization",
+                    icon: React.createElement(BarChart3, { className: "w-5 h-5" }),
+                    question: "Warum ist Datenvisualisierung wichtig?",
+                    options: [
+                        "Um Daten schöner aussehen zu lassen",
+                        "Um komplexe Daten verständlich und zugänglich zu machen",
+                        "Um Speicherplatz zu sparen",
+                        "Um Farben zu testen"
+                    ],
+                    correct: 1,
+                    explanation: "Datenvisualisierung hilft dabei, komplexe Informationen schnell zu verstehen, Muster zu erkennen und datenbasierte Entscheidungen zu treffen."
+                },
+                {
+                    category: "Digital Skills",
+                    icon: React.createElement(Brain, { className: "w-5 h-5" }),
+                    question: "Welche Fähigkeit ist in der digitalen Arbeitswelt besonders wichtig?",
+                    options: [
+                        "Schnell tippen können",
+                        "Lebenslanges Lernen und Anpassungsfähigkeit",
+                        "Nur eine Programmiersprache perfekt beherrschen",
+                        "Niemals Fehler machen"
+                    ],
+                    correct: 1,
+                    explanation: "Da sich Technologien schnell entwickeln, sind kontinuierliches Lernen und die Fähigkeit, sich an neue Tools und Methoden anzupassen, entscheidend."
+                },
+                {
+                    category: "Cloud Services",
+                    icon: React.createElement(Cloud, { className: "w-5 h-5" }),
+                    question: "Was ist SaaS (Software as a Service)?",
+                    options: [
+                        "Software, die man kaufen und installieren muss",
+                        "Software, die über das Internet bereitgestellt wird",
+                        "Software nur für Smartphones",
+                        "Kostenlose Software"
+                    ],
+                    correct: 1,
+                    explanation: "SaaS ist ein Cloud-Computing-Modell, bei dem Software-Anwendungen über das Internet bereitgestellt werden, ohne lokale Installation."
+                }
+            ];
+
+            const handleAnswerClick = (selectedIndex) => {
+                if (answered) return;
+                
+                setSelectedAnswer(selectedIndex);
+                setAnswered(true);
+                
+                const newAnswer = {
+                    question: currentQuestion,
+                    selected: selectedIndex,
+                    correct: questions[currentQuestion].correct,
+                    isCorrect: selectedIndex === questions[currentQuestion].correct
+                };
+                
+                setUserAnswers([...userAnswers, newAnswer]);
+                
+                if (selectedIndex === questions[currentQuestion].correct) {
+                    setScore(score + 1);
+                }
+            };
+
+            const nextQuestion = () => {
+                if (currentQuestion < questions.length - 1) {
+                    setCurrentQuestion(currentQuestion + 1);
+                    setSelectedAnswer(null);
+                    setAnswered(false);
+                } else {
+                    setShowResult(true);
+                }
+            };
+
+            const resetQuiz = () => {
+                setCurrentQuestion(0);
+                setScore(0);
+                setShowResult(false);
+                setSelectedAnswer(null);
+                setAnswered(false);
+                setUserAnswers([]);
+            };
+
+            const getResultCategory = () => {
+                const percentage = (score / questions.length) * 100;
+                if (percentage >= 90) return { title: "Digital Native! 🚀", desc: "Du kennst dich exzellent mit Digital Transformation aus!", color: "text-green-600" };
+                if (percentage >= 75) return { title: "Digitaler Profi! 💻", desc: "Sehr gute Kenntnisse in der digitalen Welt!", color: "text-blue-600" };
+                if (percentage >= 60) return { title: "Auf dem richtigen Weg! 📈", desc: "Solide Grundkenntnisse, weiter so!", color: "text-yellow-600" };
+                if (percentage >= 40) return { title: "Digital Lernender! 📚", desc: "Noch Raum für Verbesserung, aber du bist dabei!", color: "text-orange-600" };
+                return { title: "Digital Starter! 🌱", desc: "Zeit, mehr über Digital Transformation zu lernen!", color: "text-red-600" };
+            };
+
+            if (showResult) {
+                const result = getResultCategory();
+                const percentage = Math.round((score / questions.length) * 100);
+                
+                return React.createElement('div', {
+                    className: "max-w-2xl mx-auto p-6 bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl shadow-lg"
+                }, [
+                    React.createElement('div', {
+                        className: "text-center mb-8",
+                        key: "result-header"
+                    }, [
+                        React.createElement(Trophy, {
+                            className: "w-16 h-16 mx-auto mb-4 text-yellow-500",
+                            key: "trophy"
+                        }),
+                        React.createElement('h2', {
+                            className: "text-3xl font-bold text-gray-800 mb-2",
+                            key: "title"
+                        }, "Quiz Abgeschlossen!"),
+                        React.createElement('div', {
+                            className: "text-6xl font-bold text-blue-600 mb-2",
+                            key: "percentage"
+                        }, `${percentage}%`),
+                        React.createElement('div', {
+                            className: "text-lg text-gray-600 mb-4",
+                            key: "score"
+                        }, `${score} von ${questions.length} Fragen richtig`),
+                        React.createElement('div', {
+                            className: `text-2xl font-bold ${result.color} mb-2`,
+                            key: "result-title"
+                        }, result.title),
+                        React.createElement('div', {
+                            className: "text-gray-700",
+                            key: "result-desc"
+                        }, result.desc)
+                    ]),
+                    
+                    React.createElement('div', {
+                        className: "bg-white rounded-lg p-6 mb-6 shadow-md",
+                        key: "categories"
+                    }, [
+                        React.createElement('h3', {
+                            className: "text-xl font-bold mb-4 text-gray-800",
+                            key: "categories-title"
+                        }, "Deine Leistung nach Kategorien:"),
+                        React.createElement('div', {
+                            className: "space-y-2",
+                            key: "categories-list"
+                        }, ['KI & Machine Learning', 'Big Data', 'Power BI & Analytics', 'Cloud Computing', 'Digital Workplace'].map((category, index) => {
+                            const categoryQuestions = userAnswers.filter(answer => questions[answer.question].category.includes(category.split(' ')[0]));
+                            const categoryScore = categoryQuestions.filter(answer => answer.isCorrect).length;
+                            const categoryTotal = categoryQuestions.length;
+                            const categoryPercentage = categoryTotal > 0 ? Math.round((categoryScore / categoryTotal) * 100) : 0;
+                            
+                            return React.createElement('div', {
+                                key: category,
+                                className: "flex justify-between items-center py-2 border-b border-gray-200"
+                            }, [
+                                React.createElement('span', {
+                                    className: "text-gray-700 font-medium",
+                                    key: "cat-name"
+                                }, category),
+                                React.createElement('span', {
+                                    className: "text-blue-600 font-bold",
+                                    key: "cat-score"
+                                }, `${categoryPercentage}%`)
+                            ]);
+                        }))
+                    ]),
+                    
+                    React.createElement('button', {
+                        onClick: resetQuiz,
+                        className: "w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-6 rounded-lg font-semibold hover:from-blue-600 hover:to-purple-700 transition duration-300 transform hover:scale-105",
+                        key: "reset-button"
+                    }, "Quiz wiederholen")
+                ]);
+            }
+
+            const currentQ = questions[currentQuestion];
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+
+            return React.createElement('div', {
+                className: "max-w-2xl mx-auto p-6 bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl shadow-lg"
+            }, [
+                // Header
+                React.createElement('div', {
+                    className: "text-center mb-8",
+                    key: "header"
+                }, [
+                    React.createElement('h1', {
+                        className: "text-3xl font-bold text-gray-800 mb-2",
+                        key: "main-title"
+                    }, "Digital Transformation Quiz"),
+                    React.createElement('p', {
+                        className: "text-gray-600",
+                        key: "subtitle"
+                    }, "Teste dein Wissen über KI, Big Data, Power BI & mehr!")
+                ]),
+
+                // Progress Bar
+                React.createElement('div', {
+                    className: "mb-6",
+                    key: "progress"
+                }, [
+                    React.createElement('div', {
+                        className: "flex justify-between items-center mb-2",
+                        key: "progress-labels"
+                    }, [
+                        React.createElement('span', {
+                            className: "text-sm font-medium text-gray-700",
+                            key: "progress-label"
+                        }, "Fortschritt"),
+                        React.createElement('span', {
+                            className: "text-sm font-medium text-gray-700",
+                            key: "progress-count"
+                        }, `${currentQuestion + 1} / ${questions.length}`)
+                    ]),
+                    React.createElement('div', {
+                        className: "w-full bg-gray-200 rounded-full h-3",
+                        key: "progress-bg"
+                    }, [
+                        React.createElement('div', {
+                            className: "bg-gradient-to-r from-blue-500 to-purple-600 h-3 rounded-full transition-all duration-500 ease-out",
+                            style: { width: `${progress}%` },
+                            key: "progress-bar"
+                        })
+                    ])
+                ]),
+
+                // Question Card
+                React.createElement('div', {
+                    className: "bg-white rounded-xl shadow-md p-6 mb-6",
+                    key: "question-card"
+                }, [
+                    React.createElement('div', {
+                        className: "flex items-center mb-4",
+                        key: "category-badge"
+                    }, [
+                        React.createElement('div', {
+                            className: "flex items-center bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm font-medium",
+                            key: "category-content"
+                        }, [
+                            currentQ.icon,
+                            React.createElement('span', {
+                                className: "ml-2",
+                                key: "category-text"
+                            }, currentQ.category)
+                        ])
+                    ]),
+                    
+                    React.createElement('h2', {
+                        className: "text-xl font-bold text-gray-800 mb-6",
+                        key: "question-text"
+                    }, currentQ.question),
+                    
+                    React.createElement('div', {
+                        className: "space-y-3",
+                        key: "options"
+                    }, currentQ.options.map((option, index) => {
+                        let buttonClass = "w-full p-4 text-left border-2 rounded-lg transition-all duration-300 ";
+                        
+                        if (!answered) {
+                            buttonClass += "border-gray-200 hover:border-blue-300 hover:bg-blue-50 cursor-pointer";
+                        } else {
+                            if (index === currentQ.correct) {
+                                buttonClass += "border-green-500 bg-green-50 text-green-800";
+                            } else if (index === selectedAnswer && index !== currentQ.correct) {
+                                buttonClass += "border-red-500 bg-red-50 text-red-800";
+                            } else {
+                                buttonClass += "border-gray-200 bg-gray-50 text-gray-500";
+                            }
+                        }
+                        
+                        return React.createElement('button', {
+                            key: index,
+                            onClick: () => handleAnswerClick(index),
+                            className: buttonClass,
+                            disabled: answered
+                        }, [
+                            React.createElement('div', {
+                                className: "flex items-center justify-between",
+                                key: "option-content"
+                            }, [
+                                React.createElement('span', {
+                                    className: "font-medium",
+                                    key: "option-text"
+                                }, option),
+                                answered && (
+                                    React.createElement('div', {
+                                        className: "ml-2",
+                                        key: "option-icon"
+                                    }, [
+                                        index === currentQ.correct ? 
+                                            React.createElement(CheckCircle, {
+                                                className: "w-5 h-5 text-green-600",
+                                                key: "check"
+                                            }) : 
+                                            index === selectedAnswer ? 
+                                                React.createElement(XCircle, {
+                                                    className: "w-5 h-5 text-red-600",
+                                                    key: "x"
+                                                }) : null
+                                    ])
+                                )
+                            ])
+                        ]);
+                    })),
+                    
+                    answered && React.createElement('div', {
+                        className: "mt-6 p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500",
+                        key: "explanation"
+                    }, [
+                        React.createElement('p', {
+                            className: "text-blue-800 font-medium",
+                            key: "explanation-title"
+                        }, "💡 Erklärung:"),
+                        React.createElement('p', {
+                            className: "text-blue-700 mt-1",
+                            key: "explanation-text"
+                        }, currentQ.explanation)
+                    ])
+                ]),
+
+                // Next Button
+                answered && React.createElement('button', {
+                    onClick: nextQuestion,
+                    className: "w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-6 rounded-lg font-semibold hover:from-blue-600 hover:to-purple-700 transition duration-300 transform hover:scale-105",
+                    key: "next-button"
+                }, currentQuestion === questions.length - 1 ? 'Ergebnis anzeigen' : 'Nächste Frage'),
+
+                // Score Display
+                React.createElement('div', {
+                    className: "text-center mt-4",
+                    key: "score-display"
+                }, [
+                    React.createElement('span', {
+                        className: "text-gray-600",
+                        key: "score-label"
+                    }, "Aktuelle Punkte: "),
+                    React.createElement('span', {
+                        className: "font-bold text-blue-600",
+                        key: "score-value"
+                    }, score)
+                ])
+            ]);
+        };
+
+        ReactDOM.render(React.createElement(DigitalTransformationQuiz), document.getElementById('root'));
+    </script>
+</body>
+</html>
